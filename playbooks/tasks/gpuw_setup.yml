@@ -1,0 +1,44 @@
+- name: Add the required NVIDIA Container Toolkit 
+  become: yes
+  shell: |
+    distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+    && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - \
+    && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+
+- name: Install nvidia-docker
+  become: yes
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - nvidia-docker2
+
+- name: Setup nvidia runtime
+  become: yes
+  shell: |
+    bash -c 'cat > /etc/docker/daemon.json <<EOF
+    {
+      "default-runtime": "nvidia",
+      "runtimes": {
+          "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+          }
+      },
+      "exec-opts": ["native.cgroupdriver=systemd"],
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "100m"
+      },
+      "storage-driver": "overlay2"
+    }
+    EOF'
+
+- name: Restart docker
+  become: yes
+  service:
+    name: docker
+    daemon_reload: yes
+    state: restarted

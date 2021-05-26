@@ -1,0 +1,31 @@
+- name: Install Docker
+  hosts: all
+  gather_facts: false
+  tasks:
+  - import_tasks: tasks/docker_setup.yml
+  - import_tasks: tasks/docker_postsetup.yml
+
+- name: Install nvidia-docker
+  hosts: tag_role_gpuw
+  gather_facts: false
+  tasks:
+  - import_tasks: tasks/gpuw_setup.yml
+
+- name: Install K8s
+  hosts: all
+  gather_facts: true
+  tasks:
+  - import_tasks: tasks/k8s_presetup.yml
+  - import_tasks: tasks/k8s_setup.yml
+
+- name: Setup CP
+  hosts: tag_role_cp
+  gather_facts: false
+  tasks:
+  - import_tasks: tasks/cp_setup.yml
+
+- name: Setup Workers
+  hosts: tag_role_cpuw,tag_role_gpuw
+  gather_facts: false
+  tasks:
+  - import_tasks: tasks/worker_setup.yml

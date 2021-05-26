@@ -1,0 +1,62 @@
+- name: Remove old Docker
+  become: yes
+  ansible.builtin.package:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+
+- name: Setup Docker dependencies
+  become: yes
+  ansible.builtin.package:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - gnupg-agent
+      - software-properties-common
+      - lsb-release
+    state: latest
+
+- name: Add Docker GPG apt Key
+  become: yes
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+    state: present
+
+- name: Add Docker Repository
+  become: yes
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu bionic stable"
+    state: present
+
+- name: Install Docker
+  become: yes
+  ansible.builtin.package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: Create Docker systemd directory
+  become: yes
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: Restart docker
+  become: yes
+  service:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+
+- name: Allow to run Docker without sudo
+  become: yes
+  shell: usermod -aG docker azureuser 

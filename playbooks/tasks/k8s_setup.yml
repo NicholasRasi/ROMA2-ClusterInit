@@ -1,0 +1,29 @@
+- name: Add the required K8s GPG key 
+  become: yes
+  shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+- name: Add Kubernetes to the package manager
+  become: yes
+  shell: |
+    bash -c "cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+    deb https://apt.kubernetes.io/ kubernetes-xenial main
+    EOF"
+
+- name: Install Kubernetes binaries
+  become: yes
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - kubelet 
+      - kubeadm 
+      - kubectl
+
+- name: Restart kubelet
+  become: yes
+  service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted

@@ -1,0 +1,33 @@
+- name: Init kube
+  become: yes
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16
+
+- name: Create kube directory if it does not exist
+  ansible.builtin.file:
+    path: /home/azureuser/.kube
+    state: directory
+
+- name: Copy config with owner and permissions
+  become: yes
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /etc/kubernetes/admin.conf
+    dest: /home/azureuser/.kube/config
+    owner: azureuser
+    group: azureuser
+    mode: '0600'
+
+- name: Install flannel pod network
+  become: false
+  command: kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+- name: Install nvidia k8s-device-plugin
+  become: false
+  command: kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.9.0/nvidia-device-plugin.yml
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
