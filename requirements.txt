@@ -1,2 +1,2 @@
-ansible[azure]
+ansible
 azure-cli

@@ -1,5 +1,5 @@
 - name: Install Docker
-  hosts: all
+  hosts: all:!tag_role_wlg
   gather_facts: false
   tasks:
   - import_tasks: tasks/docker_setup.yml
@@ -12,7 +12,7 @@
   - import_tasks: tasks/gpuw_setup.yml
 
 - name: Install K8s
-  hosts: all
+  hosts: all:!tag_role_wlg
   gather_facts: true
   tasks:
   - import_tasks: tasks/k8s_presetup.yml
@@ -23,6 +23,12 @@
   gather_facts: false
   tasks:
   - import_tasks: tasks/cp_setup.yml
+
+- name: Setup CP
+  hosts: tag_role_wlg,tag_role_cp
+  gather_facts: false
+  tasks:
+  - import_tasks: tasks/setup_utils.yml
 
 - name: Setup Workers
   hosts: tag_role_cpuw,tag_role_gpuw

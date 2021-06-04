@@ -30,7 +30,7 @@ export ROMA_CP=1 && export ROMA_CPU_W=2 && export ROMA_GPU_W=2
 ```
 
 #### Cluster Initialization
-When the allocation is completed and the drivers are installed (the NvidiaGpuDriverLinux extension is provisioned successfully) on all GPU nodes, the cluster can be created with:
+When the allocation is completed and the drivers are installed (the NvidiaGpuDriverLinux extension is provisioned successfully, i.e., ```nvidia-smi``` command can be executed) on all GPU nodes, the cluster can be created with:
 ```
 ansible-playbook -i playbooks/inventory_azure_rm.yml -u azureuser --private-key key/roma2_key playbooks/start.yml
 ```
