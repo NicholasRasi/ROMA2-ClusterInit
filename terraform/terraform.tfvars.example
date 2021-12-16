@@ -1,0 +1,14 @@
+subscription_id = "<subscription_id>"
+
+rg_name      = "roma2"
+rg_location  = "westeurope"
+network_name = "roma2_vnet"
+subnet_name  = "roma2_net1"
+wlg_size     = "Standard_HB60rs"
+wlg_count    = 1
+cp_size      = "Standard_HB60rs"
+cp_count     = 1
+cpuw_size    = "Standard_B4ms"
+cpuw_count   = 2
+gpuw_size    = "Standard_NV6_Promo"
+gpuw_count   = 2
