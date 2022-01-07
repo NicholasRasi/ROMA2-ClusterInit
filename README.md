@@ -1,7 +1,7 @@
 # ROMA2 Cluster Init
 This repository contains all the required resources for the [ROMA2](https://github.com/NicholasRasi/ROMA2) cluster initialization.
 
-The infrastructure and VMs configuration are performed with a set of IaaC scripts and Ansible Playbooks. 
+The infrastructure and VMs configuration are performed with a set of IaaC scripts, Ansible Playbooks and/or Terraform. 
 
 ### Cluster Infrastructure
 ##### Creation
